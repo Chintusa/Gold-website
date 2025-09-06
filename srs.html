@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive SRS: Jewelry E-commerce Website</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals & Slate -->
+    <!-- Application Structure Plan: A single-page application with a fixed sidebar for primary navigation between major SRS sections (Overview, Functional, Non-Functional). This structure was chosen to provide immediate access to any part of the document without excessive scrolling, making it easy for stakeholders to jump to the sections most relevant to them. The "Functional Requirements" section uses a secondary, horizontal tab-based navigation to break down the complex modules into digestible parts. This layered navigation is user-friendly and prevents information overload. Interactive diagrams and charts are used instead of text walls to make the requirements tangible and easier to comprehend. -->
+    <!-- Visualization & Content Choices: 
+        - SRS Section -> Introduction/Overall: Goal(Inform) -> Text blocks with icons -> Static display -> Justification: Foundational text, best served clearly. -> Library/Method: HTML/Tailwind.
+        - SRS Section -> Functional Requirements (Homepage): Goal(Organize) -> Wireframe diagram -> Static display -> Justification: Visually represents layout requirements clearly. -> Library/Method: HTML/Tailwind.
+        - SRS Section -> Functional Requirements (Checkout): Goal(Organize) -> Process flow diagram -> Static display -> Justification: Visualizes the multi-step process effectively. -> Library/Method: HTML/Tailwind.
+        - SRS Section -> Functional Requirements (Admin Dashboard): Goal(Compare/Inform) -> Interactive Bar Chart -> User can click buttons to change data timeframe -> Justification: Demonstrates the dynamic data-driven nature of the requirement FR-502. -> Library/Method: Chart.js (Canvas).
+        - SRS Section -> Non-Functional Requirements: Goal(Inform) -> Icon-based cards -> Static display -> Justification: Breaks down dense requirements into easily scannable visual blocks. -> Library/Method: HTML/Tailwind.
+        - SRS Section -> External Interfaces: Goal(Relationships) -> Simple system architecture diagram -> Static display -> Justification: Clearly shows system dependencies. -> Library/Method: HTML/Tailwind.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f7f4;
+            color: #1f2937;
+        }
+        .main-nav-link {
+            transition: all 0.2s ease-in-out;
+        }
+        .main-nav-link.active {
+            background-color: #4f46e5;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .main-nav-link:not(.active):hover {
+            background-color: #e0e7ff;
+            color: #312e81;
+        }
+        .tab-link.active {
+            border-color: #4f46e5;
+            color: #4f46e5;
+            background-color: #eef2ff;
+        }
+        .tab-link {
+            transition: all 0.2s ease-in-out;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="flex flex-col md:flex-row min-h-screen">
+        <!-- Sidebar Navigation -->
+        <aside class="w-full md:w-64 bg-white md:border-r border-gray-200 p-4 md:p-6 space-y-4 shrink-0">
+            <h1 class="text-xl font-bold text-gray-800">Interactive SRS</h1>
+            <p class="text-sm text-gray-500">Jewelry E-commerce Website</p>
+            <nav class="space-y-2">
+                <a href="#" data-target="overview" class="main-nav-link active flex items-center px-4 py-2.5 text-sm font-medium rounded-lg">
+                    <span class="mr-3">📄</span> Overview & Personas
+                </a>
+                <a href="#" data-target="functional" class="main-nav-link flex items-center px-4 py-2.5 text-sm font-medium rounded-lg">
+                    <span class="mr-3">⚙️</span> Functional Requirements
+                </a>
+                <a href="#" data-target="non-functional" class="main-nav-link flex items-center px-4 py-2.5 text-sm font-medium rounded-lg">
+                    <span class="mr-3">🛡️</span> Non-Functional
+                </a>
+                <a href="#" data-target="interfaces" class="main-nav-link flex items-center px-4 py-2.5 text-sm font-medium rounded-lg">
+                    <span class="mr-3">🔗</span> External Interfaces
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-4 sm:p-6 md:p-10">
+            <!-- Overview Section -->
+            <section id="overview" class="content-section active">
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">Project Overview</h2>
+                <p class="text-gray-600 mb-8 max-w-3xl">This document specifies the requirements for a simplified, modern e-commerce website for selling jewelry. The goal is to create an elegant and intuitive shopping experience, supported by a comprehensive admin platform. This interactive view helps visualize the project's scope and key features.</p>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">User Personas</h3>
+                        <div class="space-y-6">
+                            <div class="flex items-start space-x-4">
+                                <div class="text-3xl mt-1">🛒</div>
+                                <div>
+                                    <h4 class="font-bold text-gray-700">The Customer (Shopper)</h4>
+                                    <p class="text-sm text-gray-600"><strong>Goal:</strong> To easily discover, view, and purchase high-quality jewelry.</p>
+                                    <p class="text-sm text-gray-500 mt-1">Expects a visually appealing, fast, and straightforward shopping experience, especially on mobile. Values trust, security, and high-quality product imagery.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <div class="text-3xl mt-1">👩‍💻</div>
+                                <div>
+                                    <h4 class="font-bold text-gray-700">The Administrator (Store Manager)</h4>
+                                    <p class="text-sm text-gray-600"><strong>Goal:</strong> To efficiently manage the online store's day-to-day operations.</p>
+                                    <p class="text-sm text-gray-500 mt-1">Requires a secure, easy-to-use interface to update products, process orders, and view sales data without needing deep technical knowledge.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                         <h3 class="text-xl font-semibold mb-4 text-gray-800">Core Design Principles</h3>
+                         <ul class="space-y-4">
+                            <li class="flex items-start space-x-3">
+                                <span class="text-indigo-600 font-bold mt-1">✓</span>
+                                <div>
+                                    <h4 class="font-semibold text-gray-700">Minimalist & Elegant UI/UX</h4>
+                                    <p class="text-sm text-gray-500">Focus on showcasing products with high-quality visuals and an uncluttered interface.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <span class="text-indigo-600 font-bold mt-1">✓</span>
+                                <div>
+                                    <h4 class="font-semibold text-gray-700">Mobile-First Responsiveness</h4>
+                                    <p class="text-sm text-gray-500">Prioritize a flawless experience on smartphones, scaling up to tablets and desktops.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <span class="text-indigo-600 font-bold mt-1">✓</span>
+                                <div>
+                                    <h4 class="font-semibold text-gray-700">Security by Design</h4>
+                                    <p class="text-sm text-gray-500">Operate over HTTPS with encrypted data and PCI compliance for payments.</p>
+                                </div>
+                            </li>
+                         </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Functional Requirements Section -->
+            <section id="functional" class="content-section">
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">Functional Requirements</h2>
+                <p class="text-gray-600 mb-6">This section details the specific features and capabilities of the website, broken down by module. Use the tabs below to explore each functional area and its requirements.</p>
+                
+                <div class="border-b border-gray-200">
+                    <nav class="-mb-px flex space-x-4 overflow-x-auto" aria-label="Tabs">
+                        <button class="tab-link active shrink-0 border-b-2 font-medium px-1 py-3 text-sm" data-tab="homepage">Homepage</button>
+                        <button class="tab-link shrink-0 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 font-medium px-1 py-3 text-sm" data-tab="catalog">Product Catalog</button>
+                        <button class="tab-link shrink-0 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 font-medium px-1 py-3 text-sm" data-tab="checkout">Cart & Checkout</button>
+                        <button class="tab-link shrink-0 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 font-medium px-1 py-3 text-sm" data-tab="admin">Admin Panel</button>
+                    </nav>
+                </div>
+
+                <div class="mt-8">
+                    <div id="tab-homepage" class="tab-content active">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Homepage Module Visualization</h3>
+                        <p class="text-gray-600 mb-6 max-w-3xl">The homepage is the digital storefront. Its requirements focus on creating a welcoming and engaging entry point that guides users toward key products and collections. The diagram below represents the layout based on requirements <span class="font-semibold">FR-101</span> to <span class="font-semibold">FR-104</span>.</p>
+                        <div class="w-full bg-white p-4 sm:p-6 rounded-xl shadow-lg border border-gray-100">
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                                <!-- Header -->
+                                <div class="flex justify-between items-center p-3 bg-gray-100 rounded-md mb-4">
+                                    <div class="font-bold">LOGO</div>
+                                    <div class="hidden sm:flex space-x-4 text-sm"><span>Home</span><span>Shop</span><span>About</span></div>
+                                    <div class="flex space-x-3 items-center"><span>👤</span><span>♡</span><span class="font-bold">🛒 3</span></div>
+                                </div>
+                                <!-- Hero -->
+                                <div class="h-48 sm:h-64 bg-gray-200 rounded-md flex items-center justify-center mb-4">
+                                    <p class="text-gray-500 text-center">FR-101: Hero Banner<br>(Image or Video)</p>
+                                </div>
+                                <!-- Carousels -->
+                                <div class="text-center mb-4">
+                                    <p class="text-gray-500">FR-102: Product Carousels</p>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-2">
+                                        <div class="h-24 bg-gray-100 rounded-md"></div>
+                                        <div class="h-24 bg-gray-100 rounded-md"></div>
+                                        <div class="h-24 bg-gray-100 rounded-md"></div>
+                                        <div class="h-24 bg-gray-100 rounded-md"></div>
+                                    </div>
+                                </div>
+                                 <!-- Footer -->
+                                <div class="p-3 bg-gray-100 rounded-md mt-4 text-center">
+                                    <p class="text-gray-500 text-sm">FR-104: Footer Links (About Us, Contact, etc.)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab-catalog" class="tab-content">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Product Catalog Module</h3>
+                        <p class="text-gray-600 mb-6 max-w-3xl">Effective product discovery is critical. These requirements ensure users can easily find products through categories, search, and filtering (<span class="font-semibold">FR-201</span> to <span class="font-semibold">FR-204</span>).</p>
+                        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                            <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                                <h4 class="font-semibold text-gray-700 mb-3">FR-204: Filtering & Sorting</h4>
+                                <p class="text-sm text-gray-500 mb-4">Interactive controls allow users to refine their search.</p>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="text-sm font-medium">Sort by</label>
+                                        <select class="w-full mt-1 p-2 border border-gray-300 rounded-md text-sm">
+                                            <option>Newest</option>
+                                            <option>Price: Low to High</option>
+                                            <option>Price: High to Low</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium">Price Range</label>
+                                        <input type="range" class="w-full mt-1">
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium">Metal Type</label>
+                                        <div class="flex items-center mt-2 space-x-4"><input type="checkbox" checked> <label>Gold</label></div>
+                                        <div class="flex items-center space-x-4"><input type="checkbox"> <label>Silver</label></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-3 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                                 <h4 class="font-semibold text-gray-700 mb-3">FR-201: Category Page Layout</h4>
+                                 <p class="text-sm text-gray-500 mb-4">A clean grid displays products within the selected category.</p>
+                                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                     <div class="border rounded-lg p-2">
+                                        <div class="h-24 bg-gray-200 rounded"></div>
+                                        <p class="text-sm font-medium mt-2">Product Name</p>
+                                        <p class="text-sm font-bold">$1,200</p>
+                                     </div>
+                                      <div class="border rounded-lg p-2">
+                                        <div class="h-24 bg-gray-200 rounded"></div>
+                                        <p class="text-sm font-medium mt-2">Product Name</p>
+                                        <p class="text-sm font-bold">$950</p>
+                                     </div>
+                                      <div class="border rounded-lg p-2">
+                                        <div class="h-24 bg-gray-200 rounded"></div>
+                                        <p class="text-sm font-medium mt-2">Product Name</p>
+                                        <p class="text-sm font-bold">$2,500</p>
+                                     </div>
+                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab-checkout" class="tab-content">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Shopping Cart & Checkout Flow</h3>
+                        <p class="text-gray-600 mb-6 max-w-3xl">A seamless checkout is vital for conversion. This flow visualizes the simple, multi-step process defined in requirement <span class="font-semibold">FR-403</span>, including the option for guest checkout (<span class="font-semibold">FR-402</span>).</p>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                            <div class="flex flex-col md:flex-row items-center justify-around space-y-4 md:space-y-0 md:space-x-4 text-center">
+                                <div class="flex flex-col items-center">
+                                    <div class="w-24 h-24 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-3xl">🛒</div>
+                                    <p class="font-semibold mt-2">1. Shopping Cart</p>
+                                    <p class="text-sm text-gray-500">Review Items</p>
+                                </div>
+                                <div class="text-3xl text-gray-300 font-light">→</div>
+                                <div class="flex flex-col items-center">
+                                    <div class="w-24 h-24 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-3xl">🚚</div>
+                                    <p class="font-semibold mt-2">2. Shipping Info</p>
+                                    <p class="text-sm text-gray-500">Address Entry</p>
+                                </div>
+                                <div class="text-3xl text-gray-300 font-light">→</div>
+                                <div class="flex flex-col items-center">
+                                    <div class="w-24 h-24 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-3xl">💳</div>
+                                    <p class="font-semibold mt-2">3. Payment</p>
+                                    <p class="text-sm text-gray-500">Secure Payment</p>
+                                </div>
+                                 <div class="text-3xl text-gray-300 font-light">→</div>
+                                <div class="flex flex-col items-center">
+                                    <div class="w-24 h-24 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-3xl">🎉</div>
+                                    <p class="font-semibold mt-2">4. Confirmation</p>
+                                    <p class="text-sm text-gray-500">Order Placed!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab-admin" class="tab-content">
+                         <h3 class="text-2xl font-semibold text-gray-800 mb-4">Administrator Panel</h3>
+                         <p class="text-gray-600 mb-6 max-w-3xl">The admin panel is the control center for the store manager. Requirement <span class="font-semibold">FR-502</span> specifies a dashboard with key metrics. This interactive chart visualizes that requirement, allowing you to simulate viewing data over different timeframes.</p>
+                         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+                                 <h4 class="font-semibold text-gray-700">Sales Dashboard Overview</h4>
+                                 <div id="chart-controls" class="flex space-x-2 mt-2 sm:mt-0">
+                                     <button data-period="weekly" class="px-3 py-1 text-sm bg-indigo-100 text-indigo-700 rounded-md">Weekly</button>
+                                     <button data-period="monthly" class="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded-md">Monthly</button>
+                                     <button data-period="yearly" class="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded-md">Yearly</button>
+                                 </div>
+                             </div>
+                             <div class="chart-container">
+                                <canvas id="adminChart"></canvas>
+                             </div>
+                         </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Non-Functional Requirements Section -->
+            <section id="non-functional" class="content-section">
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">Non-Functional Requirements</h2>
+                <p class="text-gray-600 mb-8">These requirements define the quality attributes of the system. They ensure the website is performant, secure, reliable, and compatible across different browsers.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <div class="text-3xl mb-3">🚀</div>
+                        <h3 class="text-lg font-semibold text-gray-800">Performance</h3>
+                        <p class="text-sm text-gray-600 mt-1">All pages must load in under 3 seconds on a standard broadband connection.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <div class="text-3xl mb-3">🔒</div>
+                        <h3 class="text-lg font-semibold text-gray-800">Security</h3>
+                        <p class="text-sm text-gray-600 mt-1">Protect against common web attacks (XSS, SQL Injection). All sensitive data must be encrypted.</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <div class="text-3xl mb-3">📈</div>
+                        <h3 class="text-lg font-semibold text-gray-800">Reliability</h3>
+                        <p class="text-sm text-gray-600 mt-1">The website shall maintain a 99.8% uptime, excluding scheduled maintenance windows.</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <div class="text-3xl mb-3">🌐</div>
+                        <h3 class="text-lg font-semibold text-gray-800">Browser Compatibility</h3>
+                        <p class="text-sm text-gray-600 mt-1">Function correctly on the latest two versions of Chrome, Firefox, Safari, and Edge.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- External Interfaces Section -->
+            <section id="interfaces" class="content-section">
+                 <h2 class="text-3xl font-bold text-gray-900 mb-2">External Interface Requirements</h2>
+                <p class="text-gray-600 mb-8">The website relies on third-party services for critical functions like payment processing and email communication. This diagram illustrates the key integrations.</p>
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex flex-col md:flex-row items-center justify-center space-y-8 md:space-y-0 md:space-x-8">
+                        <div class="text-center">
+                            <div class="p-4 bg-blue-100 rounded-lg inline-block">
+                               <p class="text-2xl">📧</p>
+                            </div>
+                            <h3 class="font-semibold mt-2">Email Service</h3>
+                            <p class="text-sm text-gray-500">(e.g., SendGrid)</p>
+                        </div>
+                        
+                        <div class="text-4xl text-gray-300 transform -rotate-45 md:rotate-0">↔</div>
+
+                        <div class="text-center border-4 border-indigo-500 p-6 rounded-lg">
+                             <div class="p-4 bg-indigo-100 rounded-lg inline-block">
+                               <p class="text-2xl">💍</p>
+                            </div>
+                            <h3 class="font-bold text-xl mt-2 text-indigo-700">Jewelry Website</h3>
+                            <p class="text-sm text-gray-500">Core Application</p>
+                        </div>
+                        
+                        <div class="text-4xl text-gray-300 transform rotate-45 md:rotate-0">↔</div>
+
+                        <div class="text-center">
+                            <div class="p-4 bg-green-100 rounded-lg inline-block">
+                               <p class="text-2xl">💳</p>
+                            </div>
+                            <h3 class="font-semibold mt-2">Payment Gateway</h3>
+                            <p class="text-sm text-gray-500">(e.g., Stripe, PayPal)</p>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const mainNavLinks = document.querySelectorAll('.main-nav-link');
+        const contentSections = document.querySelectorAll('.content-section');
+        
+        mainNavLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('data-target');
+
+                mainNavLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+
+                contentSections.forEach(section => {
+                    section.classList.remove('active');
+                    if (section.id === targetId) {
+                        section.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        const tabLinks = document.querySelectorAll('.tab-link');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabLinks.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                const tabTarget = tab.getAttribute('data-tab');
+
+                tabLinks.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if(content.id === `tab-${tabTarget}`){
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        const chartData = {
+            weekly: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [
+                    { label: 'Sales ($)', data: [1200, 1900, 3000, 5000, 2300, 3100, 4500], backgroundColor: 'rgba(79, 70, 229, 0.7)', borderColor: 'rgba(79, 70, 229, 1)', borderWidth: 1 },
+                    { label: 'Orders', data: [15, 20, 32, 45, 25, 35, 50], backgroundColor: 'rgba(165, 180, 252, 0.7)', borderColor: 'rgba(165, 180, 252, 1)', borderWidth: 1 }
+                ]
+            },
+            monthly: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                datasets: [
+                    { label: 'Sales ($)', data: [11000, 15000, 13000, 18000], backgroundColor: 'rgba(79, 70, 229, 0.7)', borderColor: 'rgba(79, 70, 229, 1)', borderWidth: 1 },
+                    { label: 'Orders', data: [110, 155, 140, 190], backgroundColor: 'rgba(165, 180, 252, 0.7)', borderColor: 'rgba(165, 180, 252, 1)', borderWidth: 1 }
+                ]
+            },
+            yearly: {
+                labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                datasets: [
+                    { label: 'Sales ($)', data: [150000, 180000, 210000, 250000], backgroundColor: 'rgba(79, 70, 229, 0.7)', borderColor: 'rgba(79, 70, 229, 1)', borderWidth: 1 },
+                    { label: 'Orders', data: [1500, 1850, 2200, 2600], backgroundColor: 'rgba(165, 180, 252, 0.7)', borderColor: 'rgba(165, 180, 252, 1)', borderWidth: 1 }
+                ]
+            }
+        };
+
+        const ctx = document.getElementById('adminChart').getContext('2d');
+        const adminChart = new Chart(ctx, {
+            type: 'bar',
+            data: chartData.weekly,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+            }
+        });
+
+        const chartControls = document.getElementById('chart-controls');
+        chartControls.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                const period = e.target.dataset.period;
+                if (chartData[period]) {
+                    adminChart.data = chartData[period];
+                    adminChart.update();
+                    chartControls.querySelectorAll('button').forEach(btn => {
+                        btn.classList.remove('bg-indigo-100', 'text-indigo-700');
+                        btn.classList.add('bg-gray-200', 'text-gray-700');
+                    });
+                    e.target.classList.add('bg-indigo-100', 'text-indigo-700');
+                    e.target.classList.remove('bg-gray-200', 'text-gray-700');
+                }
+            }
+        });
+        chartControls.querySelector('[data-period="weekly"]').click();
+    });
+</script>
+
+</body>
+</html>
